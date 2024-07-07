@@ -18,7 +18,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./books
-          tags: books:latest, ${{ secrets.USERNAME }}/books:latest
+          tags: books:latest
           outputs: type=docker,dest=/tmp/image.tar
 
       - name: Handle build failure
