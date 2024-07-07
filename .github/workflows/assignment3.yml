@@ -1,0 +1,227 @@
+name: assignment3
+on:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+      steps:
+      - name: log of start workflow time
+        run: echo -e "$(date -Iminutes)\nAdi Ben Zion, Noa Benborhoum\n" > /tmp/log.txt
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and export
+        uses: docker/build-push-action@v5
+        with:
+          context: ./books
+          tags: books:latest, ${{ secrets.USERNAME }}/books:latest
+          outputs: type=docker,dest=/tmp/image.tar
+
+      - name: Handle build failure
+        if: failure()
+        run: |
+          echo -e "image not able to be built\n" >> /tmp/log.txt
+
+      - name: Handle build success
+        if: success()
+        run: |
+          echo -e "image successfully built\n" >> /tmp/log.txt
+
+      - name: Print log file contents #this is for check only
+        run: cat /tmp/log.txt #this is for check only
+
+      - name: Upload log file
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log
+          path: /tmp/log.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: books
+          path: /tmp/image.tar
+          
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+    steps:
+
+        #    1. download image and run it in a container
+
+      - name: Download books artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: books
+          path: /tmp
+        
+      - name: Load Docker images from previous workflows
+        run: docker load --input /tmp/image.tar
+
+      - name: Download log artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: log
+          path: /tmp
+
+      - name: Print log file contents #this is for check only
+        run: cat /tmp/log.txt #this is for check only
+
+      - name: check books image is loaded
+        run: docker image ls
+
+      - name: Run Docker Compose
+        run: docker-compose up -d &
+
+
+      - name: Wait for application to start
+        run: sleep 10
+
+      - name: Check container is running
+        run: |
+          if [[ $(docker ps --filter "status=running" --filter "name=books" | wc -l) -ge 2 ]]; then
+            echo "Books service is running."
+            echo "Container up and running" >> /tmp/log.txt
+          else
+            echo "Books service is not running."
+            echo "Container failed to run" >> /tmp/log.txt
+            exit 1  # This will fail the job if the container is not running
+          fi
+
+      - name: Print log file contents #this is for check only
+        run: cat /tmp/log.txt #this is for check only
+
+           #     2. set up python and pytest environment
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9 # ???????
+
+      - name: Install dependencies
+        run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        pip install requests
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+#      3. run pytest tests and check results
+
+    - name: Test with pytest
+      run: |
+        cd pytest-code
+        pytest -v assn3_tests.py > assn3_test_results.txt
+
+    - name: Handle tests failure
+        if: failure()
+        run: |
+          echo -e "tests failed" >> /tmp/log.txt
+
+    - name: Handle build success
+      if: success()
+      run: |
+        echo -e "tests succeeded" >> /tmp/log.txt
+
+    - name: upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: assn3_test_results
+        path: tests/assn3_test_results.txt
+
+    - name: Upload log file
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: log
+        path: /tmp/log.txt
+        #overwrite: true ???
+        #if we need to add a shutdown to the docker compose it's here
+      
+  query:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download books image artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: books
+        path: /tmp
+
+    - name: Load Docker image
+      run: docker load --input /tmp/image.tar
+
+    - name: Download log file
+      uses: actions/download-artifact@v4
+      with:
+        name: log
+        path: /tmp
+
+    - name: Start Docker Compose
+      run: docker-compose up -d
+
+    - name: Wait for application to start
+      run: sleep 10  # Wait for a few seconds to ensure that the application is fully up
+
+    - name: Execute POST requests
+      run: |
+        curl -X POST -H "Content-Type: application/json" -d '{"title": "Adventures of Huckleberry Finn", "ISBN": "9780520343641", "genre": "Fiction"}' http://localhost:5001/books
+        curl -X POST -H "Content-Type: application/json" -d '{"title": "The Best of Isaac Asimov", "ISBN": "9780385050784", "genre": "Science Fiction"}' http://localhost:5001/books
+        curl -X POST -H "Content-Type: application/json" -d '{"title": "Fear No Evil", "ISBN": "9780394558783", "genre": "Biography"}' http://localhost:5001/books
+        curl -X POST -H "Content-Type: application/json" -d '{"title": "The Adventures of Tom Sawyer", "ISBN": "9780195810400", "genre": "Fiction"}' http://localhost:5001/books
+        curl -X POST -H "Content-Type: application/json" -d '{"title": "I, Robot", "ISBN": "9780553294385", "genre": "Science Fiction"}' http://localhost:5001/books
+        curl -X POST -H "Content-Type: application/json" -d '{"title": "Second Foundation", "ISBN": "9780553293364", "genre": "Science Fiction"}' http://localhost:5001/books
+    
+    - name: Download query.txt
+      uses: actions/download-artifact@v4
+      with:
+        name: query.txt
+        path: ./
+
+    - name: Read and execute queries from query.txt
+      run: |
+        if [ -f query.txt ]; then
+          while read line; do
+            response=$(curl -s -o response.json -w "%{http_code}" "http://localhost:5001/books${line}")
+            echo "query: ${line}" >> response.txt
+            if [ "$response" -eq 200 ]; then
+              json=$(<response.json)
+              echo "response: ${json}" >> response.txt
+            else
+              echo "response: error ${response}" >> response.txt
+            fi
+          done < query.txt
+          rm response.json
+        else
+          echo "query.txt does not exist or failed to download."
+          exit 1
+        fi
+
+    - name: Upload results
+      uses: actions/upload-artifact@v4
+      with:
+        name: query-results
+        path: response.txt
+
+    - name: Upload updated log file
+      uses: actions/upload-artifact@v4
+      with:
+        name: final-log
+        path: /tmp/log.txt
+

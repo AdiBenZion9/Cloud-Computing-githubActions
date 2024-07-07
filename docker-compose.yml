@@ -1,0 +1,21 @@
+version: '1'
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+
+  books:
+    build: ./books
+    restart: always
+    volumes:
+      - type: bind
+        source: ./books
+        target: /app
+    ports:
+      - "5001:5001"
+    expose:
+      - 80
+    depends_on:
+      - "mongo"
