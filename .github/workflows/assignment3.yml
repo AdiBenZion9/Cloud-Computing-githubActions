@@ -81,8 +81,8 @@ jobs:
         run: docker image ls
 
       - name: Run Docker Compose
-        run: docker-compose up -d &
-
+        run: docker-compose up -d
+        working-directory: ../../
 
       - name: Wait for application to start
         run: sleep 10
@@ -95,7 +95,7 @@ jobs:
           else
             echo "Books service is not running."
             echo "Container failed to run" >> /tmp/log.txt
-            exit 1  # This will fail the job if the container is not running
+            exit 1
           fi
 
       - name: Print log file contents #this is for check only
