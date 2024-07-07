@@ -113,10 +113,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-        python -m pip install --upgrade pip
-        pip install pytest
-        pip install requests
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install requests
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       #      3. run pytest tests and check results
 
@@ -126,9 +126,9 @@ jobs:
           pytest -v assn3_tests.py > assn3_test_results.txt
 
       - name: Handle tests failure
-          if: failure()
-          run: |
-            echo -e "tests failed" >> /tmp/log.txt
+        if: failure()
+        run: |
+          echo -e "tests failed" >> /tmp/log.txt
 
       - name: Handle build success
         if: success()
