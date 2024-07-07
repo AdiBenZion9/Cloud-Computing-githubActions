@@ -82,7 +82,7 @@ jobs:
 
       - name: Run Docker Compose
         run: docker-compose up -d
-        working-directory: ../../
+        working-directory: ${{ github.workspace }}
 
       - name: Wait for application to start
         run: sleep 10
