@@ -121,7 +121,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          cd pytest-code
+          cd tests
           pytest -v assn3_tests.py > assn3_test_results.txt
 
       - name: Handle tests failure
