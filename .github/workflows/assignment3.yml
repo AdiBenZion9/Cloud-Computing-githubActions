@@ -4,7 +4,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: log of start workflow time
         run: echo -e "$(date -Iminutes)\nAdi Ben Zion, Noa Benborhoum\n" > /tmp/log.txt
 
@@ -46,7 +46,7 @@ jobs:
         with:
           name: books
           path: /tmp/image.tar
-          
+        
   test:
     needs: build
     runs-on: ubuntu-latest
@@ -101,7 +101,7 @@ jobs:
       - name: Print log file contents #this is for check only
         run: cat /tmp/log.txt #this is for check only
 
-           #     2. set up python and pytest environment
+            #     2. set up python and pytest environment
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -118,38 +118,38 @@ jobs:
         pip install requests
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-#      3. run pytest tests and check results
+      #      3. run pytest tests and check results
 
-    - name: Test with pytest
-      run: |
-        cd pytest-code
-        pytest -v assn3_tests.py > assn3_test_results.txt
-
-    - name: Handle tests failure
-        if: failure()
+      - name: Test with pytest
         run: |
-          echo -e "tests failed" >> /tmp/log.txt
+          cd pytest-code
+          pytest -v assn3_tests.py > assn3_test_results.txt
 
-    - name: Handle build success
-      if: success()
-      run: |
-        echo -e "tests succeeded" >> /tmp/log.txt
+      - name: Handle tests failure
+          if: failure()
+          run: |
+            echo -e "tests failed" >> /tmp/log.txt
 
-    - name: upload test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: assn3_test_results
-        path: tests/assn3_test_results.txt
+      - name: Handle build success
+        if: success()
+        run: |
+          echo -e "tests succeeded" >> /tmp/log.txt
 
-    - name: Upload log file
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: log
-        path: /tmp/log.txt
-        #overwrite: true ???
-        #if we need to add a shutdown to the docker compose it's here
+      - name: upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: assn3_test_results
+          path: tests/assn3_test_results.txt
+
+      - name: Upload log file
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log
+          path: /tmp/log.txt
+          #overwrite: true ???
+          #if we need to add a shutdown to the docker compose it's here
       
   query:
     needs: test
