@@ -53,11 +53,11 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
-    services: # didnt do it
-      mongodb:
-        image: mongo
-        ports:
-          - 27017:27017
+    #services: # didnt do it
+     # mongodb:
+      #  image: mongo
+       # ports:
+        #  - 27017:27017
     steps:
       - name: Checkout
         uses: actions/checkout@v4
