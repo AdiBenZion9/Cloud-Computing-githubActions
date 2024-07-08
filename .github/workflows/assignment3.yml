@@ -182,14 +182,14 @@ jobs:
         curl -X POST -H "Content-Type: application/json" -d '{"title": "I, Robot", "ISBN": "9780553294385", "genre": "Science Fiction"}' http://localhost:5001/books
         curl -X POST -H "Content-Type: application/json" -d '{"title": "Second Foundation", "ISBN": "9780553293364", "genre": "Science Fiction"}' http://localhost:5001/books
     
-    - name: Upload query.txt artifact
-      run: |
-        echo "/books?title=Adventures of Huckleberry Finn" > query.txt
-        echo "/books?authorssssss=Anatoly Shcharansky" >> query.txt
-        echo "/books?authors=Anatoly Shcharansky" >> query.txt
-        echo "/books?genre=biography" >> query.txt
-        echo "/books?ISBN=0000001111111" >> query.txt
-        echo "/books?ISBN=9780553293364" >> query.txt
+    #- name: Upload query.txt artifact
+     # run: |
+      #  echo "/books?title=Adventures of Huckleberry Finn" > query.txt
+       # echo "/books?authorssssss=Anatoly Shcharansky" >> query.txt
+        #echo "/books?authors=Anatoly Shcharansky" >> query.txt
+       # echo "/books?genre=biography" >> query.txt
+       # echo "/books?ISBN=0000001111111" >> query.txt
+       # echo "/books?ISBN=9780553293364" >> query.txt
 
     - name: Download query.txt
       uses: actions/download-artifact@v4
