@@ -195,7 +195,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: query.txt
-        path: ./
+        path: query.txt
 
     - name: Read and execute queries from query.txt
       run: |
