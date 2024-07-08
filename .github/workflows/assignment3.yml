@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: log of start workflow time
-        run: echo -e "$(date -Iminutes)\nAdi Ben Zion, Noa Benborhoum\n" > /tmp/log.txt
+        run: echo -e "$(date -Iminutes)\nAdi Ben Zion, Noa Benborhoum" > /tmp/log.txt
 
       - name: Print Log File Contents # for check 
         run: cat /tmp/log.txt # for check 
@@ -27,12 +27,12 @@ jobs:
       - name: Handle build failure
         if: failure()
         run: |
-          echo -e "image not able to be built\n" >> /tmp/log.txt
+          echo -e "image not able to be built" >> /tmp/log.txt
 
       - name: Handle build success
         if: success()
         run: |
-          echo -e "image successfully built\n" >> /tmp/log.txt
+          echo -e "image successfully built" >> /tmp/log.txt
 
       - name: Print log file contents #this is for check only
         run: cat /tmp/log.txt #this is for check only
@@ -53,11 +53,6 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
-    #services: # didnt do it
-     # mongodb:
-      #  image: mongo
-       # ports:
-        #  - 27017:27017
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -187,6 +182,15 @@ jobs:
         curl -X POST -H "Content-Type: application/json" -d '{"title": "I, Robot", "ISBN": "9780553294385", "genre": "Science Fiction"}' http://localhost:5001/books
         curl -X POST -H "Content-Type: application/json" -d '{"title": "Second Foundation", "ISBN": "9780553293364", "genre": "Science Fiction"}' http://localhost:5001/books
     
+    - name: Upload query.txt artifact
+      run: |
+        echo "/books?title=Adventures of Huckleberry Finn" > query.txt
+        echo "/books?authorssssss=Anatoly Shcharansky" >> query.txt
+        echo "/books?authors=Anatoly Shcharansky" >> query.txt
+        echo "/books?genre=biography" >> query.txt
+        echo "/books?ISBN=0000001111111" >> query.txt
+        echo "/books?ISBN=9780553293364" >> query.txt
+
     - name: Download query.txt
       uses: actions/download-artifact@v4
       with:
