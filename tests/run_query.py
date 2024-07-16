@@ -15,13 +15,13 @@ def process_queries(input_file_path, output_file_path):
     for query in queries:
         try:
             response = requests.get(f"{BASE_URL}{query}")
-            response.raise_for_status()  # Raise an HTTPError on bad status
-            responses.append((query, response.text))
-        except requests.exceptions.RequestException as e:
-            if response is not None and response.status_code in {500, 400, 422, 415, 404}:
+            if response.status_code in {500, 400, 422, 415, 404}:
                 responses.append((query, f"error {response.status_code}"))
             else:
-                responses.append((query, f"error {str(e)}"))
+                response.raise_for_status()  # Raise an HTTPError on bad status
+                responses.append((query, response.text))
+        except requests.exceptions.RequestException as e:
+            responses.append((query, f"error {str(e)}"))
 
     # Step 3: Write the responses to the output file
     with open(output_file_path, 'w') as file:
