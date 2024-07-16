@@ -5,11 +5,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: log of start workflow time
+      - name: Insert to log file start time and submitters names
         run: echo -e "$(date -Iminutes)\nAdi Ben Zion, Noa Benborhoum" > /tmp/log.txt
 
-      - name: Print Log File Contents # for check 
-        run: cat /tmp/log.txt # for check 
+      - name: Print Log File Contents # this is for check only
+        run: cat /tmp/log.txt # this is for check only
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,8 +34,8 @@ jobs:
         run: |
           echo -e "image successfully built" >> /tmp/log.txt
 
-      - name: Print log file contents #this is for check only
-        run: cat /tmp/log.txt #this is for check only
+      - name: Print log file contents # this is for check only
+        run: cat /tmp/log.txt # this is for check only
 
       - name: Upload log file
         if: always()
@@ -56,7 +56,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        #    1. download image and run it in a container
 
       - name: Download books artifact
         uses: actions/download-artifact@v4
@@ -73,10 +72,10 @@ jobs:
           name: log
           path: /tmp
 
-      - name: Print log file contents #this is for check only
-        run: cat /tmp/log.txt #this is for check only
+      - name: Print log file contents # this is for check only
+        run: cat /tmp/log.txt # this is for check only
 
-      - name: check books image is loaded
+      - name: Check if books image is loaded
         run: docker image ls
 
       - name: Run Docker Compose
@@ -84,9 +83,11 @@ jobs:
         run: docker-compose up -d
 
       - name: Wait for application to start
+        if: success()
         run: sleep 10
 
       - name: Check container is running
+        if: success()
         run: |
           if [[ $(docker ps --filter "status=running" --filter "name=books" | wc -l) -ge 2 ]]; then
             echo "Container up and running" >> /tmp/log.txt
@@ -98,12 +99,10 @@ jobs:
       - name: Print log file contents #this is for check only
         run: cat /tmp/log.txt #this is for check only
 
-            #     2. set up python and pytest environment
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9 # ???????
+          python-version: 3.9
 
       - name: Install dependencies
         run: |
@@ -111,8 +110,6 @@ jobs:
           pip install pytest
           pip install requests
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      #      3. run pytest tests and check results
 
       - name: Test with pytest
         run: |
@@ -129,7 +126,7 @@ jobs:
         run: |
           echo -e "tests succeeded" >> /tmp/log.txt
 
-      - name: upload test results
+      - name: Upload test results to the requested file
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -171,7 +168,7 @@ jobs:
       run: docker-compose up -d
 
     - name: Wait for application to start
-      run: sleep 10  # Wait for a few seconds to ensure that the application is fully up
+      run: sleep 10
 
     - name: Execute POST requests
       run: |
@@ -197,7 +194,7 @@ jobs:
       run: |
         cd tests
         python run_query.py
-
+ 
     - name: Upload response file
       uses: actions/upload-artifact@v4
       with:

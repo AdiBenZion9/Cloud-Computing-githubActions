@@ -1,5 +1,5 @@
 import pymongo
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from flask_restful import Api, Resource
 import requests
 import uuid
@@ -140,7 +140,7 @@ class BooksId(Resource):
                              key in data}
             books_collection.update_one({'id': id}, {'$set': update_fields})
             ratings_collection.update_one({'id': id}, {'$set': {'title': data.get('title', book['title'])}})
-            return {'Book updated successfully!': id}, 200
+            return {'ID': id}, 200
 
         except Exception as e:
             return {'Invalid JSON file': str(e)}, 422
@@ -150,7 +150,7 @@ class BooksId(Resource):
         if delete_result.deleted_count == 0:
             return {'message': 'Not Found: Book not found'}, 404
         ratings_collection.delete_one({'id': id})
-        return {'message': 'Book successfully deleted', 'id': id}, 200
+        return {'ID': id}, 200
 
 
 class Ratings(Resource):
