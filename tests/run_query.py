@@ -4,6 +4,7 @@ import requests
 
 def process_queries(input_file_path, output_file_path):
     # Step 1: Read queries from the input file
+    global response
     with open(input_file_path, 'r') as file:
         queries = [query.strip() for query in file.readlines()]
 
@@ -11,7 +12,7 @@ def process_queries(input_file_path, output_file_path):
     responses = []
     for query in queries:
         try:
-            response = requests.get(f"books{query}")
+            response = assn3_tests.get_request(f"books{query}")
             response.raise_for_status()  # Raise an HTTPError on bad status
             responses.append((query, response.text))
         except requests.exceptions.RequestException as e:

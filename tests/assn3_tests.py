@@ -56,3 +56,9 @@ def test_post_unacceptable_genre_book():
     book = {"title": "The Greatest Joke Book Ever", "authors": "Mel Greene", "ISBN": "9780380798490", "genre": "Jokes"}
     response = requests.post(BASE_URL, json=book)
     assert response.status_code == 422
+
+
+# Helper functions
+def get_request(resource: str):
+    response = requests.get(url=f"{BASE_URL}/{resource}", headers={"Content-Type": "application/json"})
+    return response
