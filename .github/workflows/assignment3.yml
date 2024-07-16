@@ -161,6 +161,12 @@ jobs:
     - name: Load Docker image
       run: docker load --input /tmp/image.tar
 
+    - name: Download log file
+      uses: actions/download-artifact@v4
+      with:
+        name: log
+        path: /tmp
+
     - name: Start Docker Compose
       run: docker-compose up -d
 
@@ -201,72 +207,3 @@ jobs:
     - name: Shut down Docker Compose
       if: always()
       run: docker-compose down
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #- name: Upload query.txt artifact
-     # run: |
-      #  echo "/books?title=Adventures of Huckleberry Finn" > query.txt
-       # echo "/books?authorssssss=Anatoly Shcharansky" >> query.txt
-        #echo "/books?authors=Anatoly Shcharansky" >> query.txt
-       # echo "/books?genre=biography" >> query.txt
-       # echo "/books?ISBN=0000001111111" >> query.txt
-       # echo "/books?ISBN=9780553293364" >> query.txt
-
-    - name: Download query.txt
-      uses: actions/download-artifact@v4
-      with:
-        name: query.txt
-        path: query.txt
-
-    - name: Read and execute queries from query.txt
-      run: |
-        if [ -f query.txt ]; then
-          while read line; do
-            response=$(curl -s -o response.json -w "%{http_code}" "http://localhost:5001/books${line}")
-            echo "query: ${line}" >> response.txt
-            if [ "$response" -eq 200 ]; then
-              json=$(<response.json)
-              echo "response: ${json}" >> response.txt
-            else
-              echo "response: error ${response}" >> response.txt
-            fi
-          done < query.txt
-          rm response.json
-        else
-          echo "query.txt does not exist or failed to download."
-          exit 1
-        fi
-
-    - name: Upload results
-      uses: actions/upload-artifact@v4
-      with:
-        name: query-results
-        path: response.txt
-
-    - name: Upload updated log file
-      uses: actions/upload-artifact@v4
-      with:
-        name: final-log
-        path: /tmp/log.txt
-
