@@ -11,11 +11,11 @@ def process_queries(input_file_path, output_file_path):
     responses = []
     for query in queries:
         try:
-            response = assn3_tests.get_request(f"books{query}")
+            response = requests.get(f"books{query}")
             response.raise_for_status()  # Raise an HTTPError on bad status
-            responses.append((query,response.text))
+            responses.append((query, response.text))
         except requests.exceptions.RequestException as e:
-            responses.append((query,f"error {response.status_code}"))
+            responses.append((query, f"error {response.status_code}"))
 
     # Step 3: Save responses to the output file
     with open(output_file_path, 'w') as file:
