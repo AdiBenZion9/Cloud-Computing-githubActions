@@ -1,6 +1,6 @@
 import requests
 
-# Define the URL for your API
+# Define the URL for books API
 BASE_URL = "http://localhost:5001/books"
 
 books_ids = []
@@ -57,8 +57,3 @@ def test_post_unacceptable_genre_book():
     response = requests.post(BASE_URL, json=book)
     assert response.status_code == 422
 
-
-# Helper functions
-def get_request(resource: str):
-    response = requests.get(url=f"{BASE_URL}/{resource}", headers={"Content-Type": "application/json"})
-    return response

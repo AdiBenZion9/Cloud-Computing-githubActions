@@ -1,6 +1,9 @@
 import assn3_tests
 import requests
 
+# Define the URL for books API
+BASE_URL = "http://localhost:5001/books"
+
 
 def process_queries(input_file_path, output_file_path):
     # Step 1: Read queries from the input file
@@ -12,7 +15,7 @@ def process_queries(input_file_path, output_file_path):
     responses = []
     for query in queries:
         try:
-            response = assn3_tests.get_request(f"books{query}")
+            response = requests.get(f"{BASE_URL}{query}")
             response.raise_for_status()  # Raise an HTTPError on bad status
             responses.append((query, response.text))
         except requests.exceptions.RequestException as e:
@@ -30,6 +33,13 @@ def main():
     queries_file = '../query.txt'
     responses_file = 'response.txt'
     process_queries(queries_file, responses_file)
+
+
+# Helper functions
+def get_request(resource: str):
+    response = requests.get(url=f"{BASE_URL}/{resource}", headers={"Content-Type": "application/json"})
+    return response
+
 
 if __name__ == "__main__":
     main()
