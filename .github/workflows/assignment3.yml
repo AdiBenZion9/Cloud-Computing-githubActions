@@ -161,12 +161,6 @@ jobs:
     - name: Load Docker image
       run: docker load --input /tmp/image.tar
 
-    - name: Download log file
-      uses: actions/download-artifact@v4
-      with:
-        name: log
-        path: /tmp
-
     - name: Start Docker Compose
       run: docker-compose up -d
 
@@ -181,7 +175,55 @@ jobs:
         curl -X POST -H "Content-Type: application/json" -d '{"title": "The Adventures of Tom Sawyer", "ISBN": "9780195810400", "genre": "Fiction"}' http://localhost:5001/books
         curl -X POST -H "Content-Type: application/json" -d '{"title": "I, Robot", "ISBN": "9780553294385", "genre": "Science Fiction"}' http://localhost:5001/books
         curl -X POST -H "Content-Type: application/json" -d '{"title": "Second Foundation", "ISBN": "9780553293364", "genre": "Science Fiction"}' http://localhost:5001/books
-    
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        pip install requests
+
+    - name: run query
+      run: |
+        cd tests
+        python run_query.py
+
+    - name: Upload response file
+      uses: actions/upload-artifact@v4
+      with:
+        name: response
+        path: tests/response.txt
+
+    - name: Shut down Docker Compose
+      if: always()
+      run: docker-compose down
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #- name: Upload query.txt artifact
      # run: |
       #  echo "/books?title=Adventures of Huckleberry Finn" > query.txt
