@@ -11,6 +11,8 @@ def process_queries(input_file_path, output_file_path):
     for query in queries:
         try:
             response = requests.get(f"{BASE_URL}{query}")
+            responses.append(response.status_code)
+            responses.append(len(response.text))
             if len(response.text) != 0:
                 responses.append((query, response.text))
             else:
