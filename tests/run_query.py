@@ -2,6 +2,8 @@ import requests
 
 BASE_URL = "http://localhost:5001/books"
 
+accepted_queries = {'title', 'authors', 'ISBN', 'publisher', 'publishedDate', 'genre', 'id'}
+
 
 def process_queries(input_file_path, output_file_path):
     with open(input_file_path, 'r') as file:
@@ -10,10 +12,12 @@ def process_queries(input_file_path, output_file_path):
     responses = []
     s = {}
     for query in queries:
+        if query not in accepted_queries:
+            responses.append((query, f"error 422"))
+            continue
         try:
             response = requests.get(f"{BASE_URL}{query}")
-            s["code"] = response.status_code
-            s["lentext"] = len(response.text)
+            s[query] = response.status_code
             if len(response.text) != 0:
                 responses.append((query, response.text))
             else:
