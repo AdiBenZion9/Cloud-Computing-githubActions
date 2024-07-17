@@ -12,7 +12,7 @@ def process_queries(input_file_path, output_file_path):
     responses = []
     s = {}
     for query in queries:
-        if query[query.find('?') + 1 : query.find('=')] not in accepted_queries:
+        if query[query.find('?') + 1: query.find('=')] not in accepted_queries:
             responses.append((query, f"error 422"))
             continue
         try:
@@ -33,8 +33,8 @@ def process_queries(input_file_path, output_file_path):
             responses.append((query, f"error {str(req_err)}"))
 
     with open(output_file_path, 'w') as file:
-        for key in s.keys():
-            file.write(str(s[key]))
+        for key, value in s.keys():
+            file.write(f"key{key} and value{value}")
         for query, result in responses:
             file.write(f"query: {query}\nresponse: {result}\n\n")
 
