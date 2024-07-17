@@ -142,8 +142,8 @@ jobs:
           overwrite: true
 
       - name: Shut down Docker Compose
-          if: always()
-          run: docker-compose down
+        if: always()
+        run: docker-compose down
       
   query:
     needs: test
