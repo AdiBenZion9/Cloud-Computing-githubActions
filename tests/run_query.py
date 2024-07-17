@@ -8,11 +8,12 @@ def process_queries(input_file_path, output_file_path):
         queries = [query.strip() for query in file.readlines()]
 
     responses = []
+    s = {}
     for query in queries:
         try:
             response = requests.get(f"{BASE_URL}{query}")
-            responses.append(response.status_code)
-            responses.append(len(response.text))
+            s["code"] = response.status_code
+            s["lentext"] = len(response.text)
             if len(response.text) != 0:
                 responses.append((query, response.text))
             else:
@@ -28,6 +29,8 @@ def process_queries(input_file_path, output_file_path):
             responses.append((query, f"error {str(req_err)}"))
 
     with open(output_file_path, 'w') as file:
+        for key in s.keys():
+            file.write(s[key])
         for query, result in responses:
             file.write(f"query: {query}\nresponse: {result}\n\n")
 
