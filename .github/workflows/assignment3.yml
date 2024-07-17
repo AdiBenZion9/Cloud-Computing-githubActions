@@ -140,7 +140,10 @@ jobs:
           name: log
           path: /tmp/log.txt
           overwrite: true
-          #if we need to add a shutdown to the docker compose it's here
+
+      - name: Shut down Docker Compose
+          if: always()
+          run: docker-compose down
       
   query:
     needs: test
