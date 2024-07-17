@@ -15,25 +15,21 @@ def process_queries(input_file_path, output_file_path):
         if query[query.find('?') + 1: query.find('=')] not in accepted_queries:
             responses.append((query, f"error 422"))
             continue
-        try:
-            response = requests.get(f"{BASE_URL}{query}")
-            s[query] = response.status_code
-            if len(response.text) != 0:
-                responses.append((query, response.text))
-            else:
-                responses.append((query, f"error {response.status_code}"))
-            # if response.status_code in {500, 400, 422, 415, 404}:
-            #   responses.append((query, f"error {response.status_code}"))
-            # else:
-            #   response.raise_for_status()  # Raise an HTTPError on bad status
-            #  responses.append((query, response.text))
-        except requests.exceptions.HTTPError as http_err:
-            responses.append((query, f"error {http_err.response.status_code}"))
-        except requests.exceptions.RequestException as req_err:
-            responses.append((query, f"error {str(req_err)}"))
+
+        response = requests.get(f"{BASE_URL}{query}")
+        s[query] = response.status_code
+        if response.status_code in [200, 201]:
+            responses.append((query, response.text))
+        else:
+            responses.append((query, f"error {response.status_code}"))
+        # if response.status_code in {500, 400, 422, 415, 404}:
+        #   responses.append((query, f"error {response.status_code}"))
+        # else:
+        #   response.raise_for_status()  # Raise an HTTPError on bad status
+        #  responses.append((query, response.text))
 
     with open(output_file_path, 'w') as file:
-        for key, value in s.keys():
+        for key, value in s.items():
             file.write(f"key{key} and value{value}")
         for query, result in responses:
             file.write(f"query: {query}\nresponse: {result}\n\n")
