@@ -12,7 +12,7 @@ def process_queries(input_file_path, output_file_path):
     responses = []
     s = {}
     for query in queries:
-        if query not in accepted_queries:
+        if query[query.find('?') + 1 : query.find('=')] not in accepted_queries:
             responses.append((query, f"error 422"))
             continue
         try:
