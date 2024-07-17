@@ -30,7 +30,7 @@ def process_queries(input_file_path, output_file_path):
 
     with open(output_file_path, 'w') as file:
         for key in s.keys():
-            file.write(s[key])
+            file.write(str(s[key]))
         for query, result in responses:
             file.write(f"query: {query}\nresponse: {result}\n\n")
 
