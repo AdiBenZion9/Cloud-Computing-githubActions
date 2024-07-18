@@ -87,7 +87,7 @@ jobs:
         run: sleep 10
 
       - name: Check container is running
-        if: success()
+        #if: success()
         run: |
           if [[ $(docker ps --filter "status=running" --filter "name=books" | wc -l) -ge 2 ]]; then
             echo "Container up and running" >> /tmp/log.txt
