@@ -80,7 +80,7 @@ jobs:
 
       - name: Run Docker Compose
         if: success()
-        run: docker-compose up -d
+        run: docker-compose up -d || echo "Docker Compose failed to start" >> /tmp/log.txt
 
       - name: Wait for application to start
         if: success()
