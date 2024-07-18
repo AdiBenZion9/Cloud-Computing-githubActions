@@ -20,7 +20,7 @@ jobs:
       - name: Build and export
         uses: docker/build-push-action@v5
         with:
-          context: ./books
+          context: ../books #we added a dot
           tags: books:latest
           outputs: type=docker,dest=/tmp/image.tar
 
