@@ -87,7 +87,7 @@ jobs:
       - name: Check container is running
         id: check_containers
         run: |
-          if docker ps --filter "name=books" --filter "status=running" | grep books; then
+          if [[ $(docker ps --filter "status=running" --filter "name=books" | wc -l) -ge 2 ]]; then
             echo "containers_running=true" >> $GITHUB_ENV
             echo "Container up and running" >> /tmp/log.txt
           else
