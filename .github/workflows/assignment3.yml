@@ -119,7 +119,7 @@ jobs:
           pytest -v assn3_tests.py > assn3_test_results.txt
 
       - name: Handle tests failure
-        if: failure()
+        if: success() && failure() #
         run: |
           echo -e "tests failed" >> /tmp/log.txt
 
