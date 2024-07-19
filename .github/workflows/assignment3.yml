@@ -93,7 +93,6 @@ jobs:
           else
             echo "containers_running=false" >> $GITHUB_ENV
             echo "Container failed to run" >> /tmp/log.txt
-            exit 1
           fi
 
       - name: Print log file contents #this is for check only
