@@ -78,17 +78,14 @@ jobs:
       - name: Check if books image is loaded
         run: docker image ls
 
-      # 4. Start the Docker containers using docker-compose
       - name: Start Docker Container
         if: success()
-        run: docker-compose up -d
+        run: docker-compose up -d &
 
-      # 5. Wait for the containers to start
       - name: Wait for Container to Start
         if: success()
         run: sleep 10
 
-      # 6. Check that the containers are running
       - name: Check Container Status
         if: success()
         run: |
@@ -100,11 +97,9 @@ jobs:
             echo "containers_running=false" >> $GITHUB_ENV
           fi
 
-      # 7. Print the final log file after container check
-      - name: Print Final Log File After Container Checkzz
+      - name: Print final log file
         run: cat /tmp/log.txt
 
-      # 8. Set up Python and pytest environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -117,7 +112,6 @@ jobs:
           pip install requests
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # 9. Run pytest tests and check results
       - name: Run pytest tests
         run: |
           cd tests
