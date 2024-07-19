@@ -99,6 +99,7 @@ jobs:
         run: cat /tmp/log.txt #this is for check only
 
       - name: Set up Python
+        if: success() #
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
@@ -112,6 +113,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Test with pytest
+        if: success() #
         run: |
           cd tests
           pytest -v assn3_tests.py > assn3_test_results.txt
