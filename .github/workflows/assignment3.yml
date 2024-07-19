@@ -79,7 +79,7 @@ jobs:
         run: docker image ls
 
       - name: Run Docker Compose
-        run: docker-compose up -d & || true
+        run: docker-compose up -d
 
       - name: Wait for application to start
         run: sleep 10
