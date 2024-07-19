@@ -116,14 +116,9 @@ jobs:
         if: success() #
         run: |
           cd tests
-          pytest -v assn3_tests.py > assn3_test_results.txt
+          pytest -v assn3_tests.py > assn3_test_results.txt || exit 1
 
       - name: Handle tests failure
-        if: success() && failure() #
-        run: |
-          echo -e "tests failed" >> /tmp/log.txt
-
-      - name: Handle tests failure2
         if: failure() #
         run: |
           echo -e "tests failed" >> /tmp/log.txt
