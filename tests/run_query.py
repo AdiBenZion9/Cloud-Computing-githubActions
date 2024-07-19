@@ -14,7 +14,7 @@ def process_queries(input_file_path, output_file_path):
     responses = []
     for query in queries:
         if query[query.find('?') + 1: query.find('=')] not in accepted_queries:
-            responses.append((query, f"error 422"))
+            responses.append((query, f"error 422\n"))
             continue
 
         response = requests.get(f"{BASE_URL}{query}")
@@ -25,7 +25,7 @@ def process_queries(input_file_path, output_file_path):
 
     with open(output_file_path, 'w') as file:
         for query, result in responses:
-            file.write(f"query: {query}\nresponse: {json.dumps(json.loads(result))}\n")  # ??????????
+            file.write(f"query: {query}\nresponse: {result}\n")
 
 
 def main():
