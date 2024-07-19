@@ -123,6 +123,11 @@ jobs:
         run: |
           echo -e "tests failed" >> /tmp/log.txt
 
+      - name: Handle tests failure2
+        if: failure() #
+        run: |
+          echo -e "tests failed" >> /tmp/log.txt
+
       - name: Handle build success
         if: success()
         run: |
