@@ -79,12 +79,15 @@ jobs:
         run: docker image ls
 
       - name: Run Docker Compose
+        if: success()
         run: docker-compose up -d # Removed the & symbol to ensure the command completes
 
       - name: Wait for application to start
+        if: success()
         run: sleep 10
 
       - name: Check container is running
+        if: success()
         id: check_containers
         run: |
           if [[ $(docker ps --filter "status=running" --filter "name=books" | wc -l) -ge 2 ]]; then
