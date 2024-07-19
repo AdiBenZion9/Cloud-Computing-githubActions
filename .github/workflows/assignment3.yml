@@ -80,7 +80,7 @@ jobs:
 
       - name: Start Docker Container
         if: success()
-        run: docker-compose up -d &
+        run: docker-compose up -d || true
 
       - name: Wait for Container to Start
         if: success()
@@ -103,7 +103,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12.2
+          python-version: 3.9
 
       - name: Install dependencies
         run: |
@@ -117,11 +117,11 @@ jobs:
           cd tests
           pytest -v assn3_tests.py > assn3_test_results.txt
 
-      - name: Handle Tests Failure
+      - name: Handle tests failure
         if: failure() && env.containers_running == 'true'
         run: echo -e "tests failed" >> /tmp/log.txt
 
-      - name: Handle Tests Success
+      - name: Handle tests success
         if: success() && env.containers_running == 'true'
         run: echo -e "tests succeeded" >> /tmp/log.txt
 
