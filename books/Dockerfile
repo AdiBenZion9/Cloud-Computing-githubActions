@@ -14,6 +14,4 @@ EXPOSE 5001
 
 ENV FLASK_APP=books.py
 
-RUN exit 1 # ?????
-
 CMD ["python", "books.py"]
