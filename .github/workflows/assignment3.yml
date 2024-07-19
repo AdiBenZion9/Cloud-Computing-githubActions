@@ -78,56 +78,58 @@ jobs:
       - name: Check if books image is loaded
         run: docker image ls
 
-      - name: Run Docker Compose
+      # 4. Start the Docker containers using docker-compose
+      - name: Start Docker Container
         if: success()
-        run: docker-compose up -d # Removed the & symbol to ensure the command completes
+        run: docker-compose up -d
 
-      - name: Wait for application to start
+      # 5. Wait for the containers to start
+      - name: Wait for Container to Start
+        if: success()
         run: sleep 10
 
-      - name: Check container is running
+      # 6. Check that the containers are running
+      - name: Check Container Status
         if: success()
-        id: check_containers
         run: |
-          if [[ $(docker ps --filter "status=running" --filter "name=books" | wc -l) -ge 2 ]]; then
-            echo "containers_running=true" >> $GITHUB_ENV
+          if docker ps --filter "name=books" --filter "status=running" | grep books; then
             echo "Container up and running" >> /tmp/log.txt
+            echo "containers_running=true" >> $GITHUB_ENV
           else
-            echo "containers_running=false" >> $GITHUB_ENV
             echo "Container failed to run" >> /tmp/log.txt
-            exit 1
+            echo "containers_running=false" >> $GITHUB_ENV
           fi
 
-      - name: Print log file contents # this is for check only
-        run: cat /tmp/log.txt # this is for check only
+      # 7. Print the final log file after container check
+      - name: Print Final Log File After Container Checkzz
+        run: cat /tmp/log.txt
 
+      # 8. Set up Python and pytest environment
       - name: Set up Python
-        if: env.containers_running == 'true'
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.12.2
 
       - name: Install dependencies
-        if: env.containers_running == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install pytest
           pip install requests
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Test with pytest
-        if: env.containers_running == 'true'
+      # 9. Run pytest tests and check results
+      - name: Run pytest tests
         run: |
           cd tests
-          pytest -v assn3_tests.py || exit 1
+          pytest -v assn3_tests.py > assn3_test_results.txt
 
-      - name: Handle tests success
-        if: success() && env.containers_running == 'true'
-        run: echo -e "tests succeeded" >> /tmp/log.txt
-
-      - name: Handle tests failure
+      - name: Handle Tests Failure
         if: failure() && env.containers_running == 'true'
         run: echo -e "tests failed" >> /tmp/log.txt
+
+      - name: Handle Tests Success
+        if: success() && env.containers_running == 'true'
+        run: echo -e "tests succeeded" >> /tmp/log.txt
 
       - name: Upload test results to the requested file
         if: always()
