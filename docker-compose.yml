@@ -7,7 +7,7 @@ services:
       - "27017:27017"
 
   books:
-    build: ./bookssss # ???????
+    build: ./books
     restart: always
     volumes:
       - type: bind

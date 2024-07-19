@@ -97,8 +97,8 @@ jobs:
             echo "containers_running=false" >> $GITHUB_ENV
           fi
 
-      - name: Print final log file
-        run: cat /tmp/log.txt
+      - name: Print log file contents # this is for check only
+        run: cat /tmp/log.txt # this is for check only
 
       - name: Set up Python
         uses: actions/setup-python@v4
