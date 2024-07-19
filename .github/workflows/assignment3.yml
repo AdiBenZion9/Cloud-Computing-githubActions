@@ -80,11 +80,11 @@ jobs:
 
       - name: Run Docker Compose
         if: success()
-        run: docker-compose up -d # Removed the & symbol to ensure the command completes
+        run: docker-compose up -d & # Removed the & symbol to ensure the command completes
 
       - name: Wait for application to start
         if: success()
-        run: sleep 10
+        run: sleep 20
 
       - name: Check container is running
         if: success()
