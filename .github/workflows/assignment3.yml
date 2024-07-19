@@ -79,18 +79,19 @@ jobs:
         run: docker image ls
 
       - name: Run Docker Compose
-        if: success()
-        run: docker-compose up -d || true
+        run: docker-compose up -d & # || true
 
       - name: Wait for application to start
-        if: success()
         run: sleep 10
 
       - name: Check container is running
+        id: check_containers
         run: |
           if [[ $(docker ps --filter "status=running" --filter "name=books" | wc -l) -ge 2 ]]; then
+            echo "containers_running=true" >> $GITHUB_ENV
             echo "Container up and running" >> /tmp/log.txt
           else
+            echo "containers_running=false" >> $GITHUB_ENV
             echo "Container failed to run" >> /tmp/log.txt
             exit 1
           fi
@@ -99,13 +100,11 @@ jobs:
         run: cat /tmp/log.txt #this is for check only
 
       - name: Set up Python
-        if: success() #
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
       - name: Install dependencies
-        if: success()
         run: |
           python -m pip install --upgrade pip
           pip install pytest
@@ -113,22 +112,17 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Test with pytest
-        if: success()
         run: |
           cd tests
-          pytest -v assn3_tests.py || echo "tests failed" >> /tmp/log.txt
+          pytest -v assn3_tests.py
 
       - name: Handle tests success
-        if: success()
-        run: |
-          if ! grep -q "tests failed" /tmp/log.txt; then
-            echo -e "tests succeeded" >> /tmp/log.txt
-          fi
+        if: success() && env.containers_running == 'true'
+        run: echo -e "tests succeeded" >> /tmp/log.txt
 
-      - name: Handle build success
-        if: success()
-        run: |
-          echo -e "tests succeeded" >> /tmp/log.txt
+      - name: Handle tests failure
+        if: failure() && env.containers_running == 'true'
+        run: echo -e "tests failed" >> /tmp/log.txt
 
       - name: Upload test results to the requested file
         if: always()
