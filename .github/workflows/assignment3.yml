@@ -80,7 +80,7 @@ jobs:
 
       - name: Start Docker Container
         if: success()
-        run: docker-compose up -d || true
+        run: docker compose up -d || true
 
       - name: Wait for Container to Start
         if: success()
@@ -142,7 +142,7 @@ jobs:
 
       - name: Shut down Docker Compose
         if: always()
-        run: docker-compose down
+        run: docker compose down
       
   query:
     needs: test
@@ -167,7 +167,7 @@ jobs:
         path: /tmp
 
     - name: Start Docker Compose
-      run: docker-compose up -d
+      run: docker compose up -d
 
     - name: Wait for application to start
       run: sleep 10
@@ -205,4 +205,4 @@ jobs:
 
     - name: Shut down Docker Compose
       if: always()
-      run: docker-compose down
+      run: docker compose down
