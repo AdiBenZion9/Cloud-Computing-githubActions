@@ -30,7 +30,7 @@ def test_get_book_by_id():
 
 def test_get_books():
     response = requests.get(BASE_URL)
-    assert response.status_code == 200
+    assert response.status_code == 404
     assert len(response.json()) == 3  # Expecting 3 books
 
 
