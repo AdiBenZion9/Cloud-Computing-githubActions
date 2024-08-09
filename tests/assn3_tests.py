@@ -135,6 +135,5 @@ def test_get_new_book_query():
     res = requests.get(f"{BASE_URL}?genre=Science")
     assert res.status_code == 200
     res_data = res.json()
-    pirnt(res_data)
-    assert res_data["title"] == "The Art of Loving"
+    assert res_data[0]["title"] == "The Art of Loving"
 
