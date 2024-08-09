@@ -92,7 +92,8 @@ def test_post_books():
         res_data = res.json()
         assert "ID" in res_data
         books_data.append(res_data)
-    assert len(set(books_data)) == 3
+        books_data_tuples = [frozenset(book.items()) for book in books_data]
+    assert len(set(books_data_tuples)) == 3
 
 
 def test_get_query():
