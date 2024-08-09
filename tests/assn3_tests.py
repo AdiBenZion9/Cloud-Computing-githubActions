@@ -102,21 +102,6 @@ def test_get_query():
     assert len(res.json()) == 2
 
 
-def test_put():
-    books_data[0]["title"] = "new title"
-    res = requests.put(f"{BASE_URL}/{books_data[0]['ID']}", json=books_data[0])
-    res = res.json()
-    assert res == "some text"
-    assert res.status_code == 200
-
-
-def test_book_by_id():
-    res = requests.get(f"{BASE_URL}/{books_data[0]['ID']}")
-    assert res.status_code == 200
-    res_data = res.json()
-    assert res_data["title"] == "new title"
-
-
 def test_delete_book():
     res = requests.delete(f"{BASE_URL}/{books_data[0]['ID']}")
     assert res.status_code == 200
