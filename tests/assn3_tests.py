@@ -105,6 +105,8 @@ def test_get_query():
 def test_put():
     books_data[0]["title"] = "new title"
     res = requests.put(f"{BASE_URL}/{books_data[0]['ID']}", json=books_data[0])
+    res = res.json()
+    assert res = "some text"
     assert res.status_code == 200
 
 
