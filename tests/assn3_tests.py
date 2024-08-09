@@ -127,12 +127,14 @@ def test_post_book():
         "genre": "Science"
     }
     res = requests.post(BASE_URL, json=book)
-    assert res.status_code == 200
+    assert res.status_code == 201
+
 
 
 def test_get_new_book_query():
     res = requests.get(f"{BASE_URL}?genre=Science")
     assert res.status_code == 200
     res_data = res.json()
+    pirnt(res_data)
     assert res_data["title"] == "The Art of Loving"
 
