@@ -123,7 +123,6 @@ def test_delete_book():
 def test_post_book():
     book = {
         "title": "The Art of Loving",
-        "authors": "Erich Fromm",
         "ISBN": "9780062138927",
         "genre": "Science"
     }
