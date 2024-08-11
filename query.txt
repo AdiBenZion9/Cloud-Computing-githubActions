@@ -1,5 +1,5 @@
-?title=Adventures of Huckleberry Finn
-?authorssssss=Anatoly Shcharansky
-?authors=Anatoly Shcharansky
-?genre=biography
-?ISBN=0000001111111
+?authors=Mark Twain
+?ISBN=9780553293364
+?genre=Science Fiction
+?genre=Science Fiction&title=I, Robot
+?publishedDate=1948
